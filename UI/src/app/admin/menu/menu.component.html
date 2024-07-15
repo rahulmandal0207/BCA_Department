@@ -1,0 +1,132 @@
+<app-progress *ngIf="dataLoading"></app-progress>
+
+<main id="ad-main" *ngIf="action.ResponseReceived">
+    <div class="card p-2">
+        <a data-bs-toggle="modal" data-bs-target="#staticBackdrop" (click)="resetForm()">
+            <button *ngIf="action.CanCreate" color="primary" mat-button>
+                <i class="bi bi-plus-circle-fill"></i>
+                New Menu
+            </button>
+        </a>
+        <details class="tree-nav__item is-expandable" *ngFor="let menu of MenuList">
+            <summary class="tree-nav__item-title ">
+
+                <span [ngClass]="menu.Status == 1 ? 'text-success':'text-danger'">
+                    {{menu.MenuTitle}}
+                </span>
+                <span *ngIf="action.CanEdit" class="badge">
+                    <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#staticBackdrop"
+                        (click)="editMenu(menu)"><i class="bi bi-pencil-square"></i> </button>>
+                </span>
+                <span *ngIf="action.CanDelete" class="badge">
+                    <button class="btn btn-sm btn-danger" (click)="deleteMenu(menu)"><i
+                            class="bi bi-trash-fill"></i></button>
+                </span>
+            </summary>
+            <details class="tree-nav__item is-expandable">
+                <summary>
+                    <a data-bs-toggle="modal" data-bs-target="#staticBackdrop"
+                        (click)="Menu.ParentMenuId = menu.MenuId">
+                        <button color="primary" mat-button>
+                            <i class="bi bi-plus-circle-fill"></i>
+                            New Submenu
+                        </button>
+                    </a>
+                </summary>
+            </details>
+            <details class="tree-nav__item is-expandable" *ngFor="let subMenu of menu.MenuList">
+                <summary class="tree-nav__item-title ">
+
+                    <span [ngClass]="subMenu.Status == 1 ? 'text-success':'text-danger'">
+                        {{subMenu.MenuTitle}}
+                    </span>
+                    <span *ngIf="action.CanEdit" class="badge">
+                        <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#staticBackdrop"
+                            (click)="editMenu(subMenu)"><i class="bi bi-pencil-square"></i> </button>
+                    </span>
+                    <span *ngIf="action.CanDelete" class="badge">
+                        <button class="btn btn-sm btn-danger" (click)="deleteMenu(subMenu)"><i
+                                class="bi bi-trash-fill"></i></button>
+                    </span>
+
+                </summary>
+            </details>
+        </details>
+    </div>
+
+
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">{{Menu.MenuId > 0 ? 'Update':'New'}} Menu
+                    </h1>
+                    <button type=" button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                        (click)="resetForm()"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <form #MenuForm="ngForm" class="d-flex justify-content-evenly flex-wrap">
+
+                        <mat-form-field appearance="outline">
+                            <!--<mat-label>Page</mat-label>
+                            <input matInput #PageName="ngModel" name="PageName"
+                                (ngModelChange)="filterPageList(Menu.PageName)" [(ngModel)]="Menu.PageName"
+                                [matAutocomplete]="autoStaffName">
+                            <mat-autocomplete #autoStaffName="matAutocomplete">
+                                <mat-option *ngFor="let option of filterPage"
+                                    (onSelectionChange)="Menu.PageId = option.PageId" [value]="option.PageName">
+                                    {{option.PageName}}
+                                </mat-option>
+                            </mat-autocomplete>-->
+                            <mat-label>Page Name</mat-label>
+                            <mat-select #PageName="ngModel" name="PageName" [(ngModel)]="Menu.PageId">
+                                <mat-option [value]="option.PageId"
+                                    *ngFor="let option of PageList">{{option.PageName}}</mat-option>
+                            </mat-select>
+
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>Menu Title</mat-label>
+                            <input matInput #MenuTitle="ngModel" name="MenuTitle" [(ngModel)]="Menu.MenuTitle" required
+                                autofocus>
+                            <mat-error
+                                *ngIf="(MenuTitle.dirty  || MenuTitle.touched) || (MenuTitle.invalid && isSubmitted)">
+                                Menu title is <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>Icon</mat-label>
+                            <input matInput #MenuIcon="ngModel" name="MenuIcon" [(ngModel)]="Menu.MenuIcon">
+                        </mat-form-field>
+
+
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>Status</mat-label>
+                            <mat-select #Status="ngModel" name="Status" [(ngModel)]="Menu.Status" required>
+                                <mat-option [value]="status.Key"
+                                    *ngFor="let status of StatusList">{{status.Value}}</mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="(Status.dirty  || Status.touched) || (Status.invalid && isSubmitted)">
+                                Status is <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+
+                    </form>
+                    <div class="modal-footer mt-2">
+                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal"
+                            (click)="resetForm()">Cancel</button>
+                        <button class="btn btn-primary" (click)="saveMenu(MenuForm)">{{Menu.MenuId >
+                            0 ? 'Update':'Add'}}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>

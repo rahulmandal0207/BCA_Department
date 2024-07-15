@@ -1,0 +1,40 @@
+#notice {
+    min-height: 19.3em;
+}
+
+#notice .section-title{
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.notice-content {
+    display: flex;
+    flex-direction: row;
+    padding: .6em;
+    margin-bottom: .5em;
+    font-size: 1.3em;
+}
+
+.notice-content:hover {
+    border-left: 5px solid #3d4d6a;
+}
+
+.notice-content:hover i {
+    color: #b30b00;
+}
+
+.notice-content .notice-title {
+    margin-right: 1em;
+}
+
+#notice marquee {
+    border: 1px solid #f4f4f4;
+    border-radius: .5em;
+    padding: 1em;
+    min-height: 19.3em;
+}
+
+
+

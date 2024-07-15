@@ -1,0 +1,171 @@
+<app-progress *ngIf="dataLoading"></app-progress>
+
+<main id="ad-main" *ngIf="action.ResponseReceived">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between">
+            <span class="p-1">Role List</span>
+            <button *ngIf="action.CanCreate" class="btn btn-primary" data-bs-toggle="modal"
+                data-bs-target="#staticBackdrop" (click)="resetForm()">New
+                Role</button>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="staticBackdropLabel">{{Role.RoleId > 0 ? 'Update':'New'}}
+                            Role
+                        </h1>
+                        <button type=" button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                            (click)="resetForm()"></button>
+                    </div>
+                    <div class="modal-body">
+
+                        <form #RoleForm="ngForm">
+                            <div class="container">
+                                <div class="row">
+
+                                    <mat-form-field appearance="outline" class="col-sm-6">
+
+                                        <mat-label>Role Title</mat-label>
+                                        <input matInput #RoleTitle="ngModel" name="RoleTitle"
+                                            [(ngModel)]="Role.RoleTitle" required autofocus>
+                                        <mat-error
+                                            *ngIf="(RoleTitle.dirty  || RoleTitle.touched) || (RoleTitle.invalid && isSubmitted)">
+                                            Role title is <strong>required</strong>
+                                        </mat-error>
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" class="col-sm-6">
+                                        <mat-label>Status</mat-label>
+                                        <mat-select #Status="ngModel" name="Status" [(ngModel)]="Role.Status" required>
+                                            <mat-option [value]="status.Key"
+                                                *ngFor="let status of StatusList">{{status.Value}}</mat-option>
+                                        </mat-select>
+                                        <mat-error
+                                            *ngIf="(Status.dirty  || Status.touched) || (Status.invalid && isSubmitted)">
+                                            Status is <strong>required</strong>
+                                        </mat-error>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+
+                        </form>
+                        <div class="modal-footer mt-2">
+                            <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal"
+                                (click)="resetForm()">Cancel</button>
+                            <button class="btn btn-primary" (click)="saveRole(RoleForm)">{{Role.RoleId >
+                                0 ? 'Update':'Add'}}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body ">
+
+            <div class="table-container overflow-auto">
+
+                <!--<mat-form-field appearance="outline" class="mt-2 input_search">
+              <mat-label>Search</mat-label>
+              <input matInput (keyup)="applyFilter($event)" #input>
+            </mat-form-field>
+  
+            <table mat-table [dataSource]="RoleList" matSort (matSortChange)="announceSortChange($event)"
+              class="table table-hover">
+              <ng-container matColumnDef="RoleTitle">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Role Title</th>
+                <td mat-cell *matCellDef="let element"> {{element.RoleTitle}} </td>
+              </ng-container>
+  
+              <ng-container matColumnDef="Status">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+                <td mat-cell *matCellDef="let element">
+                  <span class="p-1" [ngClass]="element.Status == 1 ? 'badge text-bg-success':'badge text-bg-danger'">
+                    {{element.StatusName}}
+                  </span>
+                </td>
+              </ng-container>
+  
+              <ng-container matColumnDef="edit">
+                <th mat-header-cell *matHeaderCellDef id="edit">Edit</th>
+                <td mat-cell *matCellDef="let element">
+                  <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#staticBackdrop"
+                    (click)="editRole(element)"><i class="bi bi-pencil-square"></i> </button>
+                </td>
+              </ng-container>
+  
+              <ng-container matColumnDef="delete">
+                <th mat-header-cell *matHeaderCellDef id="delete">Delete</th>
+                <td mat-cell *matCellDef="let element">
+                  <button class="btn btn-sm btn-danger" (click)="deleteRole(element)"><i
+                      class="bi bi-trash-fill"></i></button>
+                </td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+  
+            <mat-paginator [pageSizeOptions]="PageSizes" showFirstLastButtons></mat-paginator>-->
+
+
+                <div class="dataTable-top d-flex justify-content-between m-2" s>
+                    <div class="dataTable-dropdown d-flex">
+                        <select class="dataTable-selector form-select form-select-sm" [(ngModel)]="itemPerPage">
+                            <option *ngFor="let option of PageSize" [value]="option">{{option}} </option>
+                        </select>
+                        <span class="ms-2" style="white-space: nowrap;">Entries per page</span>
+                    </div>
+                    <div class="dataTable-search">
+                        <input class="dataTable-input form-control form-control-sm" [(ngModel)]="Search"
+                            placeholder="Search..." type="text">
+                    </div>
+                </div>
+
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th style="cursor:pointer;" (click)="sort('RoleTitle')">Role</th>
+                            <th style="cursor:pointer;" (click)="sort('Status')">Status</th>
+                            <th *ngIf="action.CanEdit">Edit</th>
+                            <th *ngIf="action.CanDelete">Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr
+                            *ngFor="let item of RoleList |filter:Search|orderBy:sortKey:reverse|paginate: { itemsPerPage: itemPerPage, currentPage: p } ; ; let i = index;">
+                            <td>{{i+1}}</td>
+                            <td>{{item.RoleTitle}}</td>
+                            <td>
+                                <span class="p-1"
+                                    [ngClass]="item.Status == 1 ? 'badge text-bg-success':'badge text-bg-danger'">
+                                    {{item.StatusName}}
+                                </span>
+                            </td>
+                            <td *ngIf="action.CanEdit">
+                                <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
+                                    data-bs-target="#staticBackdrop" (click)="editRole(item)">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+                            </td>
+                            <td *ngIf="action.CanDelete">
+                                <button class="btn btn-sm btn-danger" (click)="deleteRole(item)">
+                                    <i class="bi bi-trash-fill"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="dataTable-bottom">
+                    <pagination-controls (pageChange)="onTableDataChange($event)" style="float:right;"
+                        class="my-pagination"></pagination-controls>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</main>

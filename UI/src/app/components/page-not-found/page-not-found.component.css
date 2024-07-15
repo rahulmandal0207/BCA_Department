@@ -1,0 +1,20 @@
+.page_404 {
+    font-family: 'Poppins', sans-serif;
+}
+
+.col-sm-12 {
+    text-align: center;
+}
+
+.bg_img {
+    height: 444px;
+    background-image: url('https://cdn.dribbble.com/users/285475/screenshots/2083086/dribbble_1.gif');
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+@media (max-width:480px) {
+    .bg_img {
+        background-size: 456px;
+    }
+}

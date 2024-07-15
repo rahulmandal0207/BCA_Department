@@ -1,0 +1,117 @@
+<main id="ad-main" *ngIf="action.ResponseReceived">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between">
+            <span>Notice List</span>
+            <button *ngIf="action.CanCreate" class="btn btn-primary" data-bs-toggle="modal"
+                data-bs-target="#staticBackdrop" (click)="resetForm()">New Notice</button>
+        </div>
+        <div class="card-body">
+            <div class="table-container overflow-auto">
+
+                <div class="dataTable-top d-flex justify-content-between m-2" s>
+                    <div class="dataTable-dropdown d-flex">
+                        <select class="dataTable-selector form-select form-select-sm" [(ngModel)]="itemPerPage">
+                            <option *ngFor="let option of PageSize" [value]="option">{{option}} </option>
+                        </select>
+                        <span class="ms-2" style="white-space: nowrap;">Entries per page</span>
+                    </div>
+                    <div class="dataTable-search">
+                        <input class="dataTable-input form-control form-control-sm" [(ngModel)]="Search"
+                            placeholder="Search..." type="text">
+                    </div>
+                </div>
+
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th style="cursor:pointer;" (click)="sort('NoticeTitle')">Notice Title</th>
+                            <th style="cursor:pointer;" (click)="sort('Notice')">Notice</th>
+                            <th style="cursor:pointer;" (click)="sort('Status')">Status</th>
+                            <th *ngIf="action.CanEdit">Edit</th>
+                            <th *ngIf="action.CanDelete">Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr
+                            *ngFor="let item of NoticeList |filter:Search|orderBy:sortKey:reverse|paginate: { itemsPerPage: itemPerPage, currentPage: p } ; ; let i = index;">
+                            <td>{{i+1}}</td>
+                            <td>{{item.NoticeTitle}}</td>
+                            <td><a target="_blank" *ngIf="item.NoticePath" [href]="baseUrl + item.NoticePath"
+                                    [download]="item.NoticeTitle">Download</a> </td>
+                            <td>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch"
+                                        [checked]="item.Status == 1 ? true : false"
+                                        (change)="updateStatus(item, $event)">
+
+                                </div> <!--<span class="p-1"
+                                    [ngClass]="item.Status == 1 ? 'badge text-bg-success':'badge text-bg-danger'">
+                                    {{item.StatusName}}
+                                </span>-->
+                            </td>
+                            <td *ngIf="action.CanEdit">
+                                <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
+                                    data-bs-target="#noticeModal" (click)="editNotice(item)">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+                            </td>
+                            <td *ngIf="action.CanDelete">
+                                <button class="btn btn-sm btn-danger" (click)="deleteNotice(item)">
+                                    <i class="bi bi-trash-fill"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="dataTable-bottom">
+                    <pagination-controls (pageChange)="onTableDataChange($event)" style="float:right;"
+                        class="my-pagination"></pagination-controls>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="noticeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="noticeModalLabel">Upload Notice</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form #NoticeForm="ngForm">
+                    <div class="row mb-3">
+
+                        <div class="col-6 mb-3">
+                            <label for="NoticeTitle">Notice Title <span style="color: red;">*</span></label>
+                            <input id="NoticeTitle" class="form-control" type="text" placeholder="Notice Title"
+                                #NoticeTitle="ngModel" name="NoticeTitle" [(ngModel)]="Notice.NoticeTitle" required>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label for="Notice">Notice <span style="color: red;">*</span></label>
+                            <input id="Notice" class="form-control" type="file" placeholder="Notice"
+                                (change)="setNoticeFile($event)" accept="application/pdf" required>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label for="Notice">Status <span style="color: red;">*</span></label>
+                            <select class="form-select" #Status="ngModel" name="Status" [(ngModel)]="Notice.Status">
+                                <option selected>--select Status--</option>
+                                <option [value]="status.Key" *ngFor="let status of StatusList">{{status.Value}}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" (click)="saveNotice(NoticeForm)">Upload</button>
+            </div>
+        </div>
+    </div>
+</div>

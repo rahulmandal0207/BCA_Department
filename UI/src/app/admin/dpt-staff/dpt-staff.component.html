@@ -1,0 +1,344 @@
+<app-progress *ngIf="dataLoading"></app-progress>
+
+<main id="ad-main" *ngIf="action.ResponseReceived">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between">
+            <span class="p-1">Dpt. Staff List</span>
+            <button *ngIf="action.CanCreate" class="btn btn-primary" data-bs-toggle="modal"
+                data-bs-target="#staticBackdrop" (click)="resetForm()">New
+                Dpt. Staff</button>
+        </div>
+
+
+        <div class="card-body ">
+
+            <div class="table-container overflow-auto">
+
+                <div class="dataTable-top d-flex justify-content-between m-2" s>
+                    <div class="dataTable-dropdown d-flex">
+                        <select class="dataTable-selector form-select form-select-sm" [(ngModel)]="itemPerPage">
+                            <option *ngFor="let option of PageSize" [value]="option">{{option}} </option>
+                        </select>
+                        <span class="ms-2" style="white-space: nowrap;">Entries per page</span>
+                    </div>
+                    <div class="dataTable-search">
+                        <input class="dataTable-input form-control form-control-sm" [(ngModel)]="Search"
+                            placeholder="Search..." type="text">
+                    </div>
+                </div>
+
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th style="cursor:pointer;" (click)="sort('StaffOrder')">Staff Order</th>
+                            <th style="cursor:pointer;">Staff Photo</th>
+                            <th style="cursor:pointer;" (click)="sort('StaffName')">Staff Name</th>
+                            <th style="cursor:pointer;" (click)="sort('StaffCode')">Staff Code</th>
+                            <th style="cursor:pointer;" (click)="sort('StaffType')">Staff Type</th>
+                            <th style="cursor:pointer;" (click)="sort('Email')">Email</th>
+                            <th style="cursor:pointer;" (click)="sort('DOB')">DOB</th>
+                            <th style="cursor:pointer;" (click)="sort('Gender')">Gender</th>
+                            <th style="cursor:pointer;" (click)="sort('FatherName')">FatherName</th>
+                            <th style="cursor:pointer;" (click)="sort('DesignationName')">Designation</th>
+                            <th style="cursor:pointer;" (click)="sort('twitterLink')">Twitter</th>
+                            <th style="cursor:pointer;" (click)="sort('facebookLink')">Facebook</th>
+                            <th style="cursor:pointer;" (click)="sort('instaLink')">Instagram</th>
+                            <th style="cursor:pointer;" (click)="sort('linkedinLink')">Linkedin</th>
+
+                            <th style="cursor:pointer;" (click)="sort('JoinDate')">Join Date</th>
+
+                            <th style="cursor:pointer;" (click)="sort('Status')">Status</th>
+                            <th style="cursor:pointer;" (click)="sort('Show')">Show</th>
+                            <th *ngIf="action.CanEdit">Edit</th>
+                            <th *ngIf="action.CanDelete">Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr
+                            *ngFor="let item of DptStaffList |filter:Search|orderBy:sortKey:reverse|paginate: { itemsPerPage: itemPerPage, currentPage: p } ; ; let i = index;">
+                            <td>{{i+1}}</td>
+                            <td>{{item.StaffOrder}}</td>
+                            <td>
+                                <img ngbTooltip="Click To Change" [src]="item.StaffPhoto == null ? defaultDp : baseUrl + item.StaffPhoto" height="50"
+                                    (click)="setDptStaffId(item)" style="cursor: pointer;">
+
+                            </td>
+                            <td>{{item.StaffName}}</td>
+                            <td>{{item.StaffCode}}</td>
+                            <td>{{item.StaffTypeName}}</td>
+                            <td>{{item.Email}}</td>
+                            <td style="white-space: nowrap;">{{item.DOB | date: 'dd-MM-YYYY'}}</td>
+                            <td>{{item.GenderName}}</td>
+                            <td>{{item.FatherName}}</td>
+                            <td>{{item.DesignationName}}</td>
+                            <td style="text-align: center;">
+                                <a style="color: #1DA1F2; display: block;" ngbTooltip="Go to link" target="_blank"
+                                    *ngIf="item.twitterLink" [href]="item.twitterLink">
+                                    <i class="bi bi-twitter"></i>
+                                </a>
+                            </td>
+                            <td style="text-align: center;">
+                                <a style="color: #1877F2; display: block;" ngbTooltip="Go to link" target="_blank"
+                                    *ngIf="item.facebookLink" [href]="item.facebookLink">
+                                    <i class="bi bi-facebook"></i>
+                                </a>
+                            </td>
+                            <td style="text-align: center;">
+                                <a style="color: #E4405F; display: block;" ngbTooltip="Go to link" target="_blank"
+                                    *ngIf="item.instaLink" [href]="item.instaLink">
+                                    <i class="bi bi-instagram"></i>
+                                </a>
+                            </td>
+                            <td style="text-align: center;">
+                                <a style="color: #0A66C2; display: block;" ngbTooltip="Go to link" target="_blank"
+                                    *ngIf="item.linkedinLink" [href]="item.linkedinLink">
+                                    <i class="bi bi-linkedin"></i>
+                                </a>
+                            </td>
+
+
+                            <td style="white-space: nowrap;">{{item.JoinDate | date: 'dd-MM-YYYY'}}</td>
+
+                            <td>
+                                <span class="p-1"
+                                    [ngClass]="item.Status == 1 ? 'badge text-bg-success':'badge text-bg-danger'">
+                                    {{item.StatusName}}
+                                </span>
+                            </td>
+
+                            <td *ngIf="action.CanEdit">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" disabled
+                                        [checked]="item.Show == true ? true : false">
+                                </div>
+
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
+                                    data-bs-target="#staticBackdrop" (click)="editDptStaff(item)">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+                            </td>
+                            <td *ngIf="action.CanDelete">
+                                <button class="btn btn-sm btn-danger" (click)="deleteDptStaff(item)">
+                                    <i class="bi bi-trash-fill"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="dataTable-bottom">
+                    <pagination-controls (pageChange)="onTableDataChange($event)" style="float:right;"
+                        class="my-pagination"></pagination-controls>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</main>
+
+
+<!-- Modal -->
+<div class="modal modal-lg fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">{{DptStaff.DptStaffId > 0 ?
+                    'Update':'New'}}
+                    DptStaff
+                </h1>
+                <button type=" button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                    (click)="resetForm()"></button>
+            </div>
+            <div class="modal-body">
+
+                <form #DptStaffForm="ngForm">
+                    <div class="container">
+                        <div class="row">
+
+                            <mat-form-field appearance="outline" class="col-sm-4">
+                                <mat-label>Staff Name</mat-label>
+                                <input matInput #StaffName="ngModel" name="StaffName" [(ngModel)]="DptStaff.StaffName"
+                                    required autofocus>
+                                <mat-error
+                                    *ngIf="(StaffName.dirty  || StaffName.touched) || (StaffName.invalid && isSubmitted)">
+                                    Staff Name is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="col-sm-4">
+                                <mat-label>Staff Type</mat-label>
+                                <mat-select #StaffType="ngModel" name="StaffType" [(ngModel)]="DptStaff.StaffType"
+                                    required>
+                                    <mat-option [value]="staffType.Key"
+                                        *ngFor="let staffType of StaffTypeList">{{staffType.Value}}</mat-option>
+                                </mat-select>
+                                <mat-error
+                                    *ngIf="(StaffType.dirty  || StaffType.touched) || (StaffType.invalid && isSubmitted)">
+                                    Staff Type is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="col-sm-4">
+                                <mat-label>Father Name</mat-label>
+                                <input matInput #FatherName="ngModel" name="FatherName"
+                                    [(ngModel)]="DptStaff.FatherName" required autofocus>
+                                <mat-error
+                                    *ngIf="(FatherName.dirty  || FatherName.touched) || (FatherName.invalid && isSubmitted)">
+                                    Father Name is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="col-sm-4">
+                                <mat-label>DOB</mat-label>
+                                <input matInput #DOB="ngModel" name="DOB" [(ngModel)]="DptStaff.DOB" required
+                                    [matDatepicker]="DOBPicker">
+                                <mat-datepicker-toggle matIconSuffix [for]="DOBPicker"></mat-datepicker-toggle>
+                                <mat-datepicker #DOBPicker></mat-datepicker>
+                                <mat-error *ngIf="(DOB.dirty  || DOB.touched) || (DOB.invalid && isSubmitted)">
+                                    DOB is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="col-sm-4">
+                                <mat-label>Email</mat-label>
+                                <input type="email" matInput #Email="ngModel" email="true" name="Email"
+                                    [(ngModel)]="DptStaff.Email" required autofocus>
+                                <mat-error *ngIf="(Email.dirty  || Email.touched) || (Email.invalid && isSubmitted)">
+                                    Email is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="col-sm-4">
+                                <mat-label>Gender</mat-label>
+                                <mat-select #Gender="ngModel" name="Gender" [(ngModel)]="DptStaff.Gender" required>
+                                    <mat-option [value]="gender.Key"
+                                        *ngFor="let gender of GenderList">{{gender.Value}}</mat-option>
+                                </mat-select>
+                                <mat-error *ngIf="(Gender.dirty  || Gender.touched) || (Gender.invalid && isSubmitted)">
+                                    Gender is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="col-sm-4">
+                                <mat-label>Select Designation</mat-label>
+                                <mat-select #DesignationName="ngModel" name="DesignationName"
+                                    [(ngModel)]="DptStaff.DesignationId" required>
+                                    <mat-option [value]="option.DesignationId"
+                                        *ngFor="let option of DesignationList">{{option.DesignationName}}</mat-option>
+                                </mat-select>
+                                <mat-error
+                                    *ngIf="(DesignationName.dirty  || DesignationName.touched) || (DesignationName.invalid && isSubmitted)">
+                                    Designation is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="col-sm-4">
+                                <mat-label>Join Date</mat-label>
+                                <input matInput #JoinDate="ngModel" name="JoinDate" [(ngModel)]="DptStaff.JoinDate"
+                                    required [matDatepicker]="JoinDatePicker">
+                                <mat-datepicker-toggle matIconSuffix [for]="JoinDatePicker"></mat-datepicker-toggle>
+                                <mat-datepicker #JoinDatePicker></mat-datepicker>
+                                <mat-error
+                                    *ngIf="(JoinDate.dirty  || JoinDate.touched) || (JoinDate.invalid && isSubmitted)">
+                                    Join Date is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="col-sm-4">
+                                <mat-label>Status</mat-label>
+                                <mat-select #Status="ngModel" name="Status" [(ngModel)]="DptStaff.Status" required>
+                                    <mat-option [value]="status.Key"
+                                        *ngFor="let status of StatusList">{{status.Value}}</mat-option>
+                                </mat-select>
+                                <mat-error *ngIf="(Status.dirty  || Status.touched) || (Status.invalid && isSubmitted)">
+                                    Status is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+
+                        <mat-divider class="mb-3"></mat-divider>
+                        
+                        <div class="row">
+                            <mat-form-field appearance="outline" class="col-sm-4">
+                                <mat-label>Twitter Link</mat-label>
+                                <input matInput #twitterLink="ngModel" name="twitterLink"
+                                    [(ngModel)]="DptStaff.twitterLink" autofocus>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="col-sm-4">
+                                <mat-label>Facebook Link</mat-label>
+                                <input matInput #facebookLink="ngModel" name="facebookLink"
+                                    [(ngModel)]="DptStaff.facebookLink" autofocus>
+                            </mat-form-field>
+                            
+                            <mat-form-field appearance="outline" class="col-sm-4">
+                                <mat-label>Instagram Link</mat-label>
+                                <input matInput #instaLink="ngModel" name="instaLink" [(ngModel)]="DptStaff.instaLink"
+                                    autofocus>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="col-sm-4">
+                                <mat-label>Linkedin Link</mat-label>
+                                <input matInput #linkedinLink="ngModel" name="linkedinLink"
+                                    [(ngModel)]="DptStaff.linkedinLink" autofocus>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="col-sm-4">
+                                <mat-label>Staff Order</mat-label>
+                                <input type="number" matInput #StaffOrder="ngModel" name="StaffOrder"
+                                    [(ngModel)]="DptStaff.StaffOrder" required autofocus>
+                                <mat-error
+                                    *ngIf="(StaffOrder.dirty  || StaffOrder.touched) || (StaffOrder.invalid && isSubmitted)">
+                                    Staff Order is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+                            <div class="col-sm-4">
+                                <div class="form-check form-switch">
+                                    <label class="form-label">Show in landing page</label>
+                                    <input class="form-check-input" type="checkbox" role="switch" #Show="ngModel" name ="Show"
+                                        [(ngModel)]="DptStaff.Show" [checked]="DptStaff.Show == true ? true : false">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </form>
+                <div class="modal-footer mt-2">
+                    <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal"
+                        (click)="resetForm()">Cancel</button>
+                    <button class="btn btn-primary" (click)="saveDptStaff(DptStaffForm)">{{DptStaff.StaffId >
+                        0 ? 'Update':'Add'}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="dpModal" tabindex="-1" aria-labelledby="dpModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="dpModalLabel">Update Display Picture</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="displayPic" class="form-label">Display Pic ( png, jpg, jpeg )</label>
+                    <input class="form-control" id="displayPic" type="file" accept="image/*" (change)="editDp($event)">
+                </div>
+                <span>Note : Square image works best ( aspect ratio - 1:1 )</span>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" (click)="saveDp()">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>

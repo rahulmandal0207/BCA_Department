@@ -1,0 +1,165 @@
+<app-progress *ngIf="dataLoading"></app-progress>
+
+<main id="ad-main" *ngIf="action.ResponseReceived">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between">
+            <span class="p-1">StaffLogin List</span>
+            <button *ngIf="action.CanCreate" class="btn btn-primary" data-bs-toggle="modal"
+                data-bs-target="#staticBackdrop" (click)="resetForm()">New
+                StaffLogin</button>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="staticBackdropLabel">{{StaffLogin.StaffLoginId > 0 ?
+                            'Update':'New'}}
+                            StaffLogin
+                        </h1>
+                        <button type=" button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                            (click)="resetForm()"></button>
+
+                    </div>
+                    <div class="modal-body">
+
+                        <form #StaffLoginForm="ngForm">
+                            <div class="container">
+
+                                <div class="row">
+                                    <mat-form-field appearance="outline" class="col-sm-6">
+                                        <mat-label>Staff</mat-label>
+                                        <mat-select #Staff="ngModel" name="StaffId" [(ngModel)]="StaffLogin.StaffId"
+                                            required>
+                                            <mat-option [value]="option.StaffId"
+                                                *ngFor="let option of StaffList;">{{option.StaffName}}</mat-option>
+                                        </mat-select>
+                                        <mat-error
+                                            *ngIf="(Staff.dirty  || Staff.touched) || (Staff.invalid && isSubmitted)">
+                                            Staff Name is <strong>required</strong>
+                                        </mat-error>
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" class="col-sm-6">
+                                        <mat-label>Username</mat-label>
+                                        <input matInput #UserName="ngModel" name="UserName"
+                                            [(ngModel)]="StaffLogin.UserName" required autofocus>
+                                        <mat-error
+                                            *ngIf="(UserName.dirty  || UserName.touched) || (UserName.invalid && isSubmitted)">
+                                            User Name is <strong>required</strong>
+                                        </mat-error>
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" class="col-sm-6">
+                                        <mat-label>Login Password</mat-label>
+                                        <input [type]="hide ? 'password' : 'text'" matInput #LoginPassword="ngModel"
+                                            name="LoginPassword" [(ngModel)]="StaffLogin.LoginPassword" required
+                                            autofocus>
+                                        <button mat-icon-button matSuffix (click)="hide = !hide"
+                                            [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+                                            <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                                        </button>
+                                        <mat-error
+                                            *ngIf="(LoginPassword.dirty  || LoginPassword.touched) || (LoginPassword.invalid && isSubmitted)">
+                                            Login Password is <strong>required</strong>
+                                        </mat-error>
+                                    </mat-form-field>
+
+
+                                    <mat-form-field appearance="outline" class="col-sm-6">
+                                        <mat-label>Status</mat-label>
+                                        <mat-select #Status="ngModel" name="Status" [(ngModel)]="StaffLogin.Status"
+                                            required>
+                                            <mat-option [value]="status.Key"
+                                                *ngFor="let status of StatusList">{{status.Value}}</mat-option>
+                                        </mat-select>
+                                        <mat-error
+                                            *ngIf="(Status.dirty  || Status.touched) || (Status.invalid && isSubmitted)">
+                                            Status is <strong>required</strong>
+                                        </mat-error>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+
+                        </form>
+                        <div class="modal-footer mt-2">
+                            <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal"
+                                (click)="resetForm()">Cancel</button>
+                            <button class="btn btn-primary"
+                                (click)="saveStaffLogin(StaffLoginForm)">{{StaffLogin.StaffLoginId >
+                                0 ? 'Update':'Add'}}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body ">
+            <div class="table-container overflow-auto">
+
+
+                <div class="dataTable-top d-flex justify-content-between m-2" s>
+                    <div class="dataTable-dropdown d-flex">
+                        <select class="dataTable-selector form-select form-select-sm" [(ngModel)]="itemPerPage">
+                            <option *ngFor="let option of PageSize" [value]="option">{{option}} </option>
+                        </select>
+                        <span class="ms-2" style="white-space: nowrap;">Entries per page</span>
+                    </div>
+                    <div class="dataTable-search">
+                        <input class="dataTable-input form-control form-control-sm" [(ngModel)]="Search"
+                            placeholder="Search..." type="text">
+                    </div>
+                </div>
+
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th style="cursor:pointer;" (click)="sort('StaffName')">Staff</th>
+                            <th style="cursor:pointer;" (click)="sort('UserName')">UserName</th>
+                            <th style="cursor:pointer;" (click)="sort('LoginPassword')">LoginPassword</th>
+                            <th style="cursor:pointer;" (click)="sort('Status')">Status</th>
+                            <th *ngIf="action.CanEdit">Edit</th>
+                            <th *ngIf="action.CanDelete">Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr
+                            *ngFor="let item of StaffLoginList |filter:Search|orderBy:sortKey:reverse|paginate: { itemsPerPage: itemPerPage, currentPage: p } ; ; let i = index;">
+                            <td>{{i+1}}</td>
+                            <td>{{item.StaffName}}</td>
+                            <td>{{item.UserName}}</td>
+                            <td>{{item.LoginPassword}}</td>
+
+                            <td>
+                                <span class="p-1"
+                                    [ngClass]="item.Status == 1 ? 'badge text-bg-success':'badge text-bg-danger'">
+                                    {{item.StatusName}}
+                                </span>
+                            </td>
+                            <td *ngIf="action.CanEdit">
+                                <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
+                                    data-bs-target="#staticBackdrop" (click)="editStaffLogin(item)">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+                            </td>
+                            <td *ngIf="action.CanDelete">
+                                <button class="btn btn-sm btn-danger" (click)="deleteStaffLogin(item)">
+                                    <i class="bi bi-trash-fill"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="dataTable-bottom">
+                    <pagination-controls (pageChange)="onTableDataChange($event)" style="float:right;"
+                        class="my-pagination"></pagination-controls>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</main>

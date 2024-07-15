@@ -1,0 +1,18 @@
+#stdCount{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+#stdCount .stdCountNumber {
+    /*font-size: 5em;*/
+}
+
+#stdCount .stdCountText {
+    text-transform: uppercase;
+}
+
+main {
+    scroll-behavior: smooth;
+}

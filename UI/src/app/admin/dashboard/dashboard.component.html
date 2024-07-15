@@ -1,0 +1,93 @@
+<app-progress *ngIf="dataLoading"></app-progress>
+
+<main id="ad-main">
+
+
+    <h2 class="mb-4">Quick Links</h2>
+    <div class="container quick-links">
+        <a [routerLink]="['/admin/new-student']">
+            <div class="card border-primary">
+                <i class="bi bi-plus-circle"></i>
+                <span>New Student</span>
+            </div>
+        </a>
+        <a [routerLink]="['/admin/student']">
+            <div class="card border-success">
+                <i class="bi bi-card-list"></i>
+                <span>Student List</span>
+            </div>
+        </a>
+        <a [routerLink]="['/admin/notice']">
+            <div class="card border-danger">
+                <i class="bi bi-bell"></i>
+                <span>Notice</span>
+            </div>
+        </a>
+        <a [routerLink]="['/admin/subject']">
+            <div class="card border-warning">
+                <i class="bi bi-book"></i>
+                <span>Subject</span>
+            </div>
+        </a>
+        <a [routerLink]="['/admin/session']">
+            <div class="card border-success">
+                <i class="bi bi-calendar2-plus"></i>
+                <span>Session</span>
+            </div>
+        </a>
+        <a [routerLink]="['/admin/session-subject']">
+            <div class="card border-danger">
+                <i class="bi bi-book-half"></i>
+                <span>Session Subject</span>
+            </div>
+        </a>
+        <a [routerLink]="['/admin/notes']">
+            <div class="card border-warning">
+                <i class="bi bi-clipboard2"></i>
+                <span>Notes</span>
+            </div>
+        </a>
+        <a [routerLink]="['/admin/feepaid']">
+            <div class="card border-info">
+                <i class="bi bi-currency-rupee"></i>
+                <span>Fee</span>
+            </div>
+        </a>
+        <a [routerLink]="['/admin/dpt-staff']">
+            <div class="card border-success">
+                <i class="bi bi-person-workspace"></i>
+                <span>Dept. Staff</span>
+            </div>
+        </a>
+    </div>
+
+    <h2 class="mb-4">Overview</h2>
+    <div class="container overview">
+
+
+        <span class="group">
+
+            <div class="card border-primary">
+                <p>Total Students</p>
+                <h3>{{TotalStudents}}</h3>
+            </div>
+
+
+        </span>
+
+        <!--
+        <div class="card">
+            <p>Gender Ratio</p>
+            <canvas id="pieGender" style="max-height: 400px;"></canvas>
+        </div>
+
+        <div class="card">
+            <p>Religion Ratio</p>
+            <canvas id="pieReligion" style="max-height: 400px;"></canvas>
+        </div>
+    -->
+
+    </div>
+
+
+</main>

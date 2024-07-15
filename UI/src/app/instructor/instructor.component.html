@@ -1,0 +1,44 @@
+<!-- ======= Team Section ======= -->
+<section id="team" class="team section-bg">
+    <div class="container" data-aos="fade-up">
+
+        <div class="section-title">
+            <h2>Our Top Instructor</h2>
+            <p>Our top instructor possesses extensive knowledge and expertise in their subject matter. They have
+                acquired
+                significant experience through years of practical work, research, and teaching.The instructor holds
+                advanced
+                degrees and relevant certifications in their field, demonstrating their commitment to continuous
+                learning
+                and professional development.</p>
+        </div>
+
+        <div class="row">
+            <div matRipple *ngFor="let staff of DptStaffList" class="col-lg-6 mt-4 mt-lg-0 mb-3" data-aos="zoom-in"
+                data-aos-delay="200">
+                <div class="member d-flex align-items-start">
+                    <div style="text-align: center;" class="pic"><img
+                            [src]="staff.StaffPhoto == null ? defaultDp : baseUrl + staff.StaffPhoto" class="img-fluid"
+                            alt=""></div>
+                    <div class="member-info">
+                        <h4>{{staff.StaffName}}</h4>
+                        <span>{{staff.DesignationName}}</span>
+                        <p>Bca Department</p>
+                        <div class="social">
+                            <a target="_blank" *ngIf="staff.twitterLink" [href]="staff.twitterLink"><i
+                                    class="ri-twitter-fill"></i></a>
+                            <a target="_blank" *ngIf="staff.facebookLink" [href]="staff.facebookLink"><i
+                                    class="ri-facebook-fill"></i></a>
+                            <a target="_blank" *ngIf="staff.instaLink" [href]="staff.instaLink"><i
+                                    class="ri-instagram-fill"></i></a>
+                            <a target="_blank" *ngIf="staff.linkedinLink" [href]="staff.linkedinLink"><i
+                                    class="ri-linkedin-box-fill"></i> </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</section><!-- End Team Section -->

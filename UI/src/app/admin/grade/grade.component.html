@@ -1,0 +1,172 @@
+<app-progress *ngIf="dataLoading"></app-progress>
+
+<main id="ad-main">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between">
+            <span class="p-1">Grade List</span>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"
+                (click)="resetForm()">New
+                Designation</button>
+        </div>
+
+        <div class="card-body ">
+
+            <div class="row">
+
+                <mat-form-field appearance="outline" class="col-sm-3">
+                    <mat-label>--Select Session--</mat-label>
+                    <mat-select name="SessionId" [(ngModel)]="Grade.SessionId" (selectionChange)="onSessionChange()">
+                        <mat-option *ngFor="let session of SessionList" [value]="session.SessionId">
+                            {{session.SessionName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field *ngIf="Grade.SessionId > 0" appearance="outline" class="col-sm-2">
+                    <mat-label>--Select Semester--</mat-label>
+                    <mat-select name="Semester" [(ngModel)]="Grade.Semester">
+                        <mat-option *ngFor="let semester of SemesterList" [value]="semester.Key">
+                            {{semester.Value}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field *ngIf="Grade.Semester > 0" appearance="outline" class="col-sm-4">
+                    <mat-label>--Select Student--</mat-label>
+                    <mat-select name="SessionId" [(ngModel)]="Grade.StudentId" (selectionChange)="getGradeList()">
+                        <mat-option *ngFor="let student of StudentList" [value]="student.StudentId">
+                            {{student.StudentName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+            <div class="table-container overflow-auto">
+
+
+                <table *ngIf="Grade.SessionId && Grade.Semester" class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>
+
+                            </th>
+                            <th *ngFor="let item of GradeList">{{item.SubjectName}} ({{item.SubjectCode}})</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr
+                            *ngFor="let item of GradeList |filter:Search|orderBy:sortKey:reverse|paginate: { itemsPerPage: itemPerPage, currentPage: p } ; ; let i = index;">
+                            <td>{{item.StudentName}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="dataTable-bottom">
+                    <pagination-controls (pageChange)="onTableDataChange($event)" style="float:right;"
+                        class="my-pagination"></pagination-controls>
+                </div>
+
+            </div>
+        </div>
+        <div class="card-footer" style="text-align: center;">
+            <button class="btn btn-primary" (click)="saveGrade()">Submit</button>
+        </div>
+    </div>
+
+</main>
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">{{Grade.GradeId > 0 ?
+                    'Update':'New'}}
+                    Grade
+                </h1>
+                <button type=" button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                    (click)="resetForm()"></button>
+            </div>
+            <div class="modal-body">
+
+                <form #GradeForm="ngForm">
+                    <div class="container">
+                        <div class="row">
+
+                            <mat-form-field appearance="outline" class="col-sm-6">
+                                <mat-label>Session</mat-label>
+                                <mat-select #Session="ngModel" name="Session" [(ngModel)]="Grade.SessionId" required
+                                    (selectionChange)="onSessionChange()">
+                                    <mat-option [value]="session.SessionId"
+                                        *ngFor="let session of SessionList">{{session.SessionName}}</mat-option>
+                                </mat-select>
+                                <mat-error
+                                    *ngIf="(Session.dirty  || Session.touched) || (Session.invalid && isSubmitted)">
+                                    Session is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="col-sm-6">
+                                <mat-label>Semester</mat-label>
+                                <mat-select #Semester="ngModel" name="Semester" [(ngModel)]="Grade.Semester" required>
+                                    <mat-option [value]="semester.Key"
+                                        *ngFor="let semester of SemesterList">{{semester.Value}}</mat-option>
+                                </mat-select>
+                                <mat-error
+                                    *ngIf="(Semester.dirty  || Semester.touched) || (Semester.invalid && isSubmitted)">
+                                    Semester is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+
+                            <mat-form-field appearance="outline" class="col-sm-6">
+                                <mat-label>Student</mat-label>
+                                <mat-select #Student="ngModel" name="Student" [(ngModel)]="Grade.StudentId" required>
+                                    <mat-option [value]="Student.StudentId"
+                                        *ngFor="let Student of StudentList">{{Student.StudentName}}</mat-option>
+                                </mat-select>
+                                <mat-error
+                                    *ngIf="(Student.dirty  || Student.touched) || (Student.invalid && isSubmitted)">
+                                    Student is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="col-sm-6">
+                                <mat-label> Subject</mat-label>
+                                <mat-select #SessionSubject="ngModel" name="SessionSubject"
+                                    [(ngModel)]="Grade.SessionSubjectId" required>
+                                    <mat-option [value]="option.SessionSubjectId"
+                                        *ngFor="let option of SessionSubjectList">{{option.SubjectName}}</mat-option>
+                                </mat-select>
+                                <mat-error
+                                    *ngIf="(SessionSubject.dirty  || SessionSubject.touched) || (SessionSubject.invalid && isSubmitted)">
+                                    Subject is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="col-sm-6">
+                                <mat-label>Total Marks</mat-label>
+                                <input matInput #TotalMarks="ngModel" name="TotalMarks" [(ngModel)]="Grade.TotalMarks"
+                                    required>
+                                <mat-error
+                                    *ngIf="(TotalMarks.dirty  || TotalMarks.touched) || (TotalMarks.invalid && isSubmitted)">
+                                    Total Marks is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+                        </div>
+                    </div>
+
+                </form>
+                <div class="modal-footer mt-2">
+                    <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal"
+                        (click)="resetForm()">Cancel</button>
+                    <button class="btn btn-primary" (click)="saveGrade()">{{Grade.GradeId >
+                        0 ? 'Update':'Add'}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

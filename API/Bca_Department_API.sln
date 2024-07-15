@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33712.159
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bca_Department_API", "Bca_Department_API\Bca_Department_API.csproj", "{6A37379F-53F8-43A5-B7E0-BB8A532E503D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bca_Department_classes", "Bca_Department_classes\Bca_Department_classes.csproj", "{4F8377B8-97F7-471A-B5FC-2FED4D359AAA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6A37379F-53F8-43A5-B7E0-BB8A532E503D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A37379F-53F8-43A5-B7E0-BB8A532E503D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A37379F-53F8-43A5-B7E0-BB8A532E503D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A37379F-53F8-43A5-B7E0-BB8A532E503D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F8377B8-97F7-471A-B5FC-2FED4D359AAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F8377B8-97F7-471A-B5FC-2FED4D359AAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F8377B8-97F7-471A-B5FC-2FED4D359AAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F8377B8-97F7-471A-B5FC-2FED4D359AAA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8A394B2E-F96E-4140-8805-A171E15A073D}
+	EndGlobalSection
+EndGlobal

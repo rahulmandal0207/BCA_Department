@@ -1,0 +1,15 @@
+<div style="margin-top: 80px; text-align: center;">
+
+    <div class="section-title">
+        <h2>Top Students</h2>
+    </div>
+
+    <div class="container">
+
+        <div *ngFor="let session of SessionList" class="card p-3">
+            <h3 class="mb-5">Top 5 of {{session.SessionName}}</h3>
+            <canvas id="barChart"></canvas>
+
+        </div>
+    </div>
+</div>

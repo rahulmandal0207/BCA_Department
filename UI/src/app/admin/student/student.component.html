@@ -1,0 +1,624 @@
+<app-progress *ngIf="dataLoading"></app-progress>
+
+<main id="ad-main" *ngIf="action.ResponseReceived">
+
+
+
+    <div class="card">
+        <div class="card-header d-flex justify-content-between">
+            <span class="p-1">
+                <span>Student List</span>
+                <!--<span>
+                    <mat-checkbox color="primary" [(ngModel)]="ShowOverview">Show Overview</mat-checkbox>
+                </span>-->
+            </span>
+            <button *ngIf="action.CanCreate" class="btn btn-primary" routerLink="/admin/new-student">New
+                Student</button>
+        </div>
+
+
+        <div class="card-body ">
+
+            <div class="row">
+                <mat-form-field appearance="outline" class="col-sm-4">
+                    <mat-label>--Select Session--</mat-label>
+                    <mat-select name="SessionId" [(ngModel)]="SelectedSession.SessionId"
+                        (selectionChange)="getStudentList()">
+                        <mat-option *ngFor="let session of SessionList" [value]="session.SessionId">
+                            {{session.SessionName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+
+            </div>
+
+            <div *ngIf="StudentList.length > 0" class="table-container overflow-auto">
+                <div class="dataTable-top d-flex justify-content-between m-2">
+                    <div class="dataTable-dropdown d-flex">
+                        <select class="dataTable-selector form-select form-select-sm" [(ngModel)]="itemPerPage">
+                            <option *ngFor="let option of PageSize" [value]="option">{{option}} </option>
+                        </select>
+                        <span class="ms-2" style="white-space: nowrap;">Entries per page</span>
+                    </div>
+                    <div class="dataTable-search">
+                        <input class="dataTable-input form-control form-control-sm" [(ngModel)]="Search"
+                            placeholder="Search..." type="text">
+                    </div>
+                </div>
+
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th style="cursor:pointer;">Student's Photo</th>
+                            <th style="cursor:pointer;" (click)="sort('ClassRoll')">Class Roll No.<i
+                                    [ngStyle]="{opacity : sortKey == 'ClassRoll' ? '1' : '.5' }"
+                                    class="bi bi-arrow-down-up"></i></th>
+                            <th style="cursor:pointer;" (click)="sort('StudentName')">Student <i
+                                    [ngStyle]="{opacity : sortKey == 'StudentName' ? '1' : '.5' }"
+                                    class="bi bi-arrow-down-up"></i></th>
+                            <th style="cursor:pointer;" (click)="sort('UniversityRoll')">University Roll No.<i
+                                    [ngStyle]="{opacity : sortKey == 'UniversityRoll' ? '1' : '.5' }"
+                                    class="bi bi-arrow-down-up"></i></th>
+
+                            <th style="cursor:pointer;" (click)="sort('SessionName')">Session<i
+                                    [ngStyle]="{opacity : sortKey == 'SessionName' ? '1' : '.5' }"
+                                    class="bi bi-arrow-down-up"></i></th>
+                            <th style="cursor:pointer;" (click)="sort('AdmissionNo')">Admission No. <i
+                                    [ngStyle]="{opacity : sortKey == 'AdmissionNo' ? '1' : '.5' }"
+                                    class="bi bi-arrow-down-up"></i></th>
+                            <th style="cursor:pointer;" (click)="sort('DOB')">DOB <i
+                                    [ngStyle]="{opacity : sortKey == 'DOB' ? '1' : '.5' }"
+                                    class="bi bi-arrow-down-up"></i>
+                            </th>
+                            <th style="cursor:pointer;" (click)="sort('Email')">Email <i
+                                    [ngStyle]="{opacity : sortKey == 'Email' ? '1' : '.5' }"
+                                    class="bi bi-arrow-down-up"></i></th>
+                            <th style="cursor:pointer;" (click)="sort('MobileNo')">Mobile No. <i
+                                    [ngStyle]="{opacity : sortKey == 'MobileNo' ? '1' : '.5' }"
+                                    class="bi bi-arrow-down-up"></i></th>
+                            <th style="cursor:pointer;" (click)="sort('AlternateMobileNo')">Alternate Mobile No.<i
+                                    [ngStyle]="{opacity : sortKey == 'AlternateMobileNo' ? '1' : '.5' }"
+                                    class="bi bi-arrow-down-up"></i></th>
+                            <th style="cursor:pointer;" (click)="sort('Gender')">Gender <i
+                                    [ngStyle]="{opacity : sortKey == 'Gender' ? '1' : '.5' }"
+                                    class="bi bi-arrow-down-up"></i></th>
+                            <th style="cursor:pointer;" (click)="sort('AadhaarNo')">Aadhaar No.<i
+                                    [ngStyle]="{opacity : sortKey == 'AadhaarNo' ? '1' : '.5' }"
+                                    class="bi bi-arrow-down-up"></i></th>
+
+                            <th style="cursor:pointer;" (click)="sort('FahterName')">Fahter's Name <i
+                                    [ngStyle]="{opacity : sortKey == 'FahterName' ? '1' : '.5' }"
+                                    class="bi bi-arrow-down-up"></i></th>
+                            <th style="cursor:pointer;" (click)="sort('FatherOccupation')">Father's Occupation <i
+                                    [ngStyle]="{opacity : sortKey == 'FatherOccupation' ? '1' : '.5' }"
+                                    class="bi bi-arrow-down-up"></i></th>
+                            <th style="cursor:pointer;" (click)="sort('MotherName')">Mother's Name <i
+                                    [ngStyle]="{opacity : sortKey == 'MotherName' ? '1' : '.5' }"
+                                    class="bi bi-arrow-down-up"></i></th>
+                            <th style="cursor:pointer;" (click)="sort('MotherOccupation')">Mother's Occupation <i
+                                    [ngStyle]="{opacity : sortKey == 'MotherOccupation' ? '1' : '.5' }"
+                                    class="bi bi-arrow-down-up"></i></th>
+                            <th style="cursor:pointer;" (click)="sort('GuardianMobileNo')">Guardian's Mobile No. <i
+                                    [ngStyle]="{opacity : sortKey == 'GuardianMobileNo' ? '1' : '.5' }"
+                                    class="bi bi-arrow-down-up"></i></th>
+                            <th style="cursor:pointer;" (click)="sort('CorrespondenceAddress')">Correspondence Address
+                                <i [ngStyle]="{opacity : sortKey == 'CorrespondenceAddress' ? '1' : '.5' }"
+                                    class="bi bi-arrow-down-up"></i>
+                            </th>
+                            <th style="cursor:pointer;" (click)="sort('CorrespondenceStateName')">Correspondence State
+                                <i [ngStyle]="{opacity : sortKey == 'CorrespondenceStateName' ? '1' : '.5' }"
+                                    class="bi bi-arrow-down-up"></i>
+                            </th>
+                            <th style="cursor:pointer;" (click)="sort('CorrespondenceCityName')">Correspondence City
+                                <i [ngStyle]="{opacity : sortKey == 'CorrespondenceCityName' ? '1' : '.5' }"
+                                    class="bi bi-arrow-down-up"></i>
+                            </th>
+                            <th style="cursor:pointer;" (click)="sort('CorrespondencePinCode')">Correspondence PinCode
+                                <i [ngStyle]="{opacity : sortKey == 'CorrespondencePinCode' ? '1' : '.5' }"
+                                    class="bi bi-arrow-down-up"></i>
+                            </th>
+                            <th style="cursor:pointer;" (click)="sort('PermanentAddress')">Permanent Address <i
+                                    [ngStyle]="{opacity : sortKey == 'PermanentAddress' ? '1' : '.5' }"
+                                    class="bi bi-arrow-down-up"></i></th>
+                            <th style="cursor:pointer;" (click)="sort('PermanentStateName')">Permanent State <i
+                                    [ngStyle]="{opacity : sortKey == 'PermanentStateName' ? '1' : '.5' }"
+                                    class="bi bi-arrow-down-up"></i></th>
+                            <th style="cursor:pointer;" (click)="sort('PermanentCityName')">Permanent City <i
+                                    [ngStyle]="{opacity : sortKey == 'PermanentCityName' ? '1' : '.5' }"
+                                    class="bi bi-arrow-down-up"></i></th>
+                            <th style="cursor:pointer;" (click)="sort('PermanentPinCode')">Permanent PinCode <i
+                                    [ngStyle]="{opacity : sortKey == 'PermanentPinCode' ? '1' : '.5' }"
+                                    class="bi bi-arrow-down-up"></i></th>
+                            <th style="cursor:pointer;" (click)="sort('Category')">Category <i
+                                    [ngStyle]="{opacity : sortKey == 'Category' ? '1' : '.5' }"
+                                    class="bi bi-arrow-down-up"></i></th>
+                            <th style="cursor:pointer;" (click)="sort('BloodGroup')">Blood Group <i
+                                    [ngStyle]="{opacity : sortKey == 'BloodGroup' ? '1' : '.5' }"
+                                    class="bi bi-arrow-down-up"></i></th>
+                            <th style="cursor:pointer;" (click)="sort('Religion')">Religion <i
+                                    [ngStyle]="{opacity : sortKey == 'Religion' ? '1' : '.5' }"
+                                    class="bi bi-arrow-down-up"></i></th>
+                            <th style="cursor:pointer;" (click)="sort('Status')">Status <i
+                                    [ngStyle]="{opacity : sortKey == 'Status' ? '1' : '.5' }"
+                                    class="bi bi-arrow-down-up"></i></th>
+                            <th *ngIf="action.CanEdit">Edit</th>
+                            <th *ngIf="action.CanDelete">Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr [ngClass]="item.Status == 2 ? 'table-danger':'table-success'"
+                            *ngFor="let item of StudentList |filter:Search|orderBy:sortKey:reverse|paginate: { itemsPerPage: itemPerPage, currentPage: p } ; ; let i = index;">
+                            <td>{{i+1}}</td>
+                            <td style="text-align: center;"> <img ngbTooltip="Click to change" 
+                                    [src]="item.StudentPhoto == null ? defaultDp : baseUrl + item.StudentPhoto"
+                                    height="50" (click)="setStudentId(item)" style="cursor: pointer;"></td>
+
+                            <td>{{item.ClassRoll}}</td>
+                            <td>{{item.StudentName}}</td>
+                            <td>{{item.UniversityRoll}}</td>
+
+
+                            <td style="white-space: nowrap;">{{item.SessionName}}</td>
+                            <td>{{item.AdmissionNo}}</td>
+
+                            <td style="white-space: nowrap;">{{item.DOB | date : "dd-MM-yyyy"}}</td>
+                            <td>{{item.Email}}</td>
+                            <td>{{item.MobileNo}}</td>
+                            <td>{{item.AlternateMobileNo}}</td>
+                            <td>{{item.GenderName}}</td>
+                            <td>{{item.AadhaarNo}}</td>
+                            <td>{{item.FatherName}}</td>
+                            <td>{{item.FatherOccupation}}</td>
+                            <td>{{item.MotherName}}</td>
+                            <td>{{item.MotherOccupation}}</td>
+                            <td>{{item.GuardianMobileNo}}</td>
+
+                            <td>{{item.CorrespondenceAddress}}</td>
+                            <td>{{item.CorrespondenceStateName}}</td>
+                            <td>{{item.CorrespondenceCityName}}</td>
+                            <td>{{item.CorrespondencePinCode}}</td>
+                            <td>{{item.PermanentAddress}}</td>
+                            <td>{{item.PermanentStateName}}</td>
+                            <td>{{item.PermanentCityName}}</td>
+                            <td>{{item.PermanentPinCode}}</td>
+
+                            <td>{{item.CategoryName}}</td>
+                            <td>{{item.BloodGroupName}}</td>
+                            <td>{{item.ReligionName}}</td>
+
+                            <td>
+                                <span class="p-1"
+                                    [ngClass]="item.Status == 1 ? 'badge text-bg-success':'badge text-bg-danger'">
+                                    {{item.StatusName}}
+                                </span>
+                            </td>
+                            <td *ngIf="action.CanEdit">
+                                <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
+                                    data-bs-target="#staticBackdrop1" (click)="editStudent(item)">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+                            </td>
+                            <td *ngIf="action.CanDelete">
+                                <button class="btn btn-sm btn-danger" (click)="deleteStudent(item)">
+                                    <i class="bi bi-trash-fill"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="dataTable-bottom">
+                    <pagination-controls (pageChange)="onTableDataChange($event)" style="float:right;"
+                        class="my-pagination"></pagination-controls>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+
+<!-- Modal -->
+<div class="modal modal-lg fade" id="staticBackdrop1" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">{{Student.StudentId > 0 ?
+                    'Update':'New'}}
+                    Student
+                </h1>
+                <button type=" button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                    (click)="resetForm()"></button>
+            </div>
+            <div class="modal-body">
+
+                <form #StudentForm="ngForm">
+                    <div class="container">
+                        <p>Personal Information</p>
+                        <div class="row">
+
+                            <mat-form-field appearance="outline" class="col-sm-4">
+                                <mat-label>University Roll</mat-label>
+                                <input type="number" matInput #UniversityRoll="ngModel" name="UniversityRoll"
+                                    [(ngModel)]="Student.UniversityRoll" autofocus>
+                                <!--<mat-error
+                                    *ngIf="(UniversityRoll.dirty  || UniversityRoll.touched) || (UniversityRoll.invalid && isSubmitted)">
+                                    University Roll is <strong>required</strong>
+                                </mat-error>-->
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="col-sm-4">
+                                <mat-label>Student Name</mat-label>
+                                <input matInput #StudentName="ngModel" name="StudentName"
+                                    [(ngModel)]="Student.StudentName" required autofocus>
+                                <mat-error
+                                    *ngIf="(StudentName.dirty  || StudentName.touched) || (StudentName.invalid && isSubmitted)">
+                                    Student Name is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="col-sm-4">
+                                <mat-label>Class Roll no</mat-label>
+                                <input type="number" matInput #ClassRoll="ngModel" name="ClassRoll"
+                                    [(ngModel)]="Student.ClassRoll" required autofocus>
+                                <mat-error
+                                    *ngIf="(ClassRoll.dirty  || ClassRoll.touched) || (ClassRoll.invalid && isSubmitted)">
+                                    Class Roll no is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+
+
+                            <mat-form-field appearance="outline" class="col-sm-4">
+                                <mat-label>Session</mat-label>
+                                <mat-select #Session="ngModel" name="Session" [(ngModel)]="Student.SessionId" required>
+                                    <mat-option *ngFor="let option of SessionList" [value]="option.SessionId">
+                                        {{option.SessionName}}
+                                    </mat-option>
+                                </mat-select>
+                                <mat-error
+                                    *ngIf="(Session.dirty  || Session.touched) || (Session.invalid && isSubmitted)">
+                                    Session is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="col-sm-4">
+                                <mat-label>Admission No.</mat-label>
+                                <input matInput #AdmissionNo="ngModel" name="AdmissionNo"
+                                    [(ngModel)]="Student.AdmissionNo" required autofocus>
+                                <mat-error
+                                    *ngIf="(AdmissionNo.dirty  || AdmissionNo.touched) || (AdmissionNo.invalid && isSubmitted)">
+                                    Admission No. is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="col-sm-4">
+                                <mat-label>Gender</mat-label>
+                                <mat-select #Gender="ngModel" name="Gender" [(ngModel)]="Student.Gender" required>
+                                    <mat-option [value]="gender.Key"
+                                        *ngFor="let gender of GenderList">{{gender.Value}}</mat-option>
+                                </mat-select>
+                                <mat-error *ngIf="(Gender.dirty  || Gender.touched) || (Gender.invalid && isSubmitted)">
+                                    Gender is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="col-sm-4">
+                                <mat-label>DOB</mat-label>
+                                <input matInput #DOB="ngModel" name="DOB" [(ngModel)]="Student.DOB" required
+                                    [matDatepicker]="DOBPicker">
+                                <mat-datepicker-toggle matIconSuffix [for]="DOBPicker"></mat-datepicker-toggle>
+                                <mat-datepicker #DOBPicker></mat-datepicker>
+                                <mat-error *ngIf="(DOB.dirty  || DOB.touched) || (DOB.invalid && isSubmitted)">
+                                    DOB is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="col-sm-4">
+                                <mat-label>Email</mat-label>
+                                <input matInput #Email="ngModel" name="Email" [(ngModel)]="Student.Email" required
+                                    autofocus>
+                                <mat-error *ngIf="(Email.dirty  || Email.touched) || (Email.invalid && isSubmitted)">
+                                    Email is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="col-sm-4">
+                                <mat-label>Motile No</mat-label>
+                                <input type="number" matInput #MobileNo="ngModel" name="MobileNo"
+                                    [(ngModel)]="Student.MobileNo" required autofocus>
+                                <mat-error
+                                    *ngIf="(MobileNo.dirty  || MobileNo.touched) || (MobileNo.invalid && isSubmitted)">
+                                    Motile No is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="col-sm-4">
+                                <mat-label>Alternate Mobile No</mat-label>
+                                <input type="number" matInput #AlternateMobileNo="ngModel" name="AlternateMobileNo"
+                                    [(ngModel)]="Student.AlternateMobileNo" autofocus>
+
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="col-sm-4">
+                                <mat-label>Aadhaar No</mat-label>
+                                <input type="number" matInput #AadhaarNo="ngModel" name="AadhaarNo"
+                                    [(ngModel)]="Student.AadhaarNo" autofocus>
+                                <!--<mat-error
+                                    *ngIf="(AadhaarNo.dirty  || AadhaarNo.touched) || (AadhaarNo.invalid && isSubmitted)">
+                                    Aadhaar No is <strong>required</strong>
+                                </mat-error>-->
+                            </mat-form-field>
+
+
+                            <mat-form-field appearance="outline" class="col-sm-4">
+                                <mat-label>BloodGroup</mat-label>
+                                <mat-select #BloodGroup="ngModel" name="BloodGroup" [(ngModel)]="Student.BloodGroup"
+                                    required>
+                                    <mat-option [value]="BloodGroup.Key"
+                                        *ngFor="let BloodGroup of BloodGroupList">{{BloodGroup.Value}}</mat-option>
+                                </mat-select>
+                                <mat-error
+                                    *ngIf="(BloodGroup.dirty  || BloodGroup.touched) || (BloodGroup.invalid && isSubmitted)">
+                                    BloodGroup is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+
+                            <mat-divider></mat-divider>
+
+                        </div>
+
+                        <div class="row">
+                            <p>Guardian Information</p>
+                            <mat-form-field appearance="outline" class="col-sm-4">
+                                <mat-label>Father's Name</mat-label>
+                                <input matInput #FatherName="ngModel" name="FatherName" [(ngModel)]="Student.FatherName"
+                                    required autofocus>
+                                <mat-error
+                                    *ngIf="(FatherName.dirty  || FatherName.touched) || (FatherName.invalid && isSubmitted)">
+                                    Father's Name is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="col-sm-4">
+                                <mat-label>Father's Occupation</mat-label>
+                                <input matInput #FatherOccupation="ngModel" name="FatherOccupation"
+                                    [(ngModel)]="Student.FatherOccupation" autofocus>
+                                <mat-error
+                                    *ngIf="(FatherOccupation.dirty  || FatherOccupation.touched) || (FatherOccupation.invalid && isSubmitted)">
+                                    Father's Occupation is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="col-sm-4">
+                                <mat-label>Mother's Name</mat-label>
+                                <input matInput #MotherName="ngModel" name="MotherName" [(ngModel)]="Student.MotherName"
+                                    required autofocus>
+                                <mat-error
+                                    *ngIf="(MotherName.dirty  || MotherName.touched) || (MotherName.invalid && isSubmitted)">
+                                    Mother's Name is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="col-sm-4">
+                                <mat-label>Mother's Occupation</mat-label>
+                                <input matInput #MotherOccupation="ngModel" name="MotherOccupation"
+                                    [(ngModel)]="Student.MotherOccupation" autofocus>
+                                <mat-error
+                                    *ngIf="(MotherOccupation.dirty  || MotherOccupation.touched) || (MotherOccupation.invalid && isSubmitted)">
+                                    Mother's Occupation is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="col-sm-4">
+                                <mat-label>Guardian Mobile No</mat-label>
+                                <input type="number" matInput #GuardianMobileNo="ngModel" name="GuardianMobileNo"
+                                    [(ngModel)]="Student.GuardianMobileNo" required autofocus>
+                                <mat-error
+                                    *ngIf="(GuardianMobileNo.dirty  || GuardianMobileNo.touched) || (GuardianMobileNo.invalid && isSubmitted)">
+                                    Guardian Mobile No is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+                            <mat-divider></mat-divider>
+                        </div>
+
+                        <div class="row">
+                            <p>Address - Correspondence</p>
+
+                            <mat-form-field appearance="outline" class="col-sm-4">
+                                <mat-label>Address</mat-label>
+                                <input matInput #CorrespondenceAddress="ngModel" name="CorrespondenceAddress"
+                                    [(ngModel)]="Student.CorrespondenceAddress" required autofocus>
+                                <mat-error
+                                    *ngIf="(CorrespondenceAddress.dirty  || CorrespondenceAddress.touched) || (CorrespondenceAddress.invalid && isSubmitted)">
+                                    Address is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="col-sm-4">
+                                <mat-label>State</mat-label>
+                                <mat-select #CorrespondenceState="ngModel" name="CorrespondenceState"
+                                    [(ngModel)]="Student.CorrespondenceStateId" required
+                                    (selectionChange)="onStateChange(1)">
+                                    <mat-option *ngFor="let option of StateList" [value]="option.StateId">
+                                        {{option.StateName}}
+                                    </mat-option>
+                                </mat-select>
+                                <mat-error
+                                    *ngIf="(CorrespondenceState.dirty  || CorrespondenceState.touched) || (CorrespondenceState.invalid && isSubmitted)">
+                                    State is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="col-sm-4">
+                                <mat-label>City</mat-label>
+                                <mat-select #CorrespondenceCity="ngModel" name="CorrespondenceCity"
+                                    [(ngModel)]="Student.CorrespondenceCityId" required>
+                                    <mat-option *ngFor="let option of cCityList" [value]="option.CityId">
+                                        {{option.CityName}}
+                                    </mat-option>
+                                </mat-select>
+                                <mat-error
+                                    *ngIf="(CorrespondenceCity.dirty  || CorrespondenceCity.touched) || (CorrespondenceCity.invalid && isSubmitted)">
+                                    City is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="col-sm-4">
+                                <mat-label>PinCode</mat-label>
+                                <input type="number" matInput #CorrespondencePinCode="ngModel"
+                                    name="CorrespondencePinCode" [(ngModel)]="Student.CorrespondencePinCode" required
+                                    autofocus>
+                                <mat-error
+                                    *ngIf="(CorrespondencePinCode.dirty  || CorrespondencePinCode.touched) || (CorrespondencePinCode.invalid && isSubmitted)">
+                                    PinCode is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+                        </div>
+
+
+                        <div class="row">
+                            <p>Address - Permanent : <small>
+                                    <mat-checkbox color="primary" #sameAsCorr
+                                        (click)="sameAsCorrespondence(sameAsCorr)"> same as
+                                        correspondence</mat-checkbox>
+                                </small></p>
+
+                            <mat-form-field appearance="outline" class="col-sm-4">
+                                <mat-label>Address</mat-label>
+                                <input matInput #PermanentAddress="ngModel" name="PermanentAddress"
+                                    [(ngModel)]="Student.PermanentAddress" required autofocus>
+                                <mat-error
+                                    *ngIf="(PermanentAddress.dirty  || PermanentAddress.touched) || (PermanentAddress.invalid && isSubmitted)">
+                                    Address is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="col-sm-4">
+                                <mat-label>State</mat-label>
+                                <mat-select #PermanentState="ngModel" name="PermanentState"
+                                    [(ngModel)]="Student.PermanentStateId" required
+                                    (selectionChange)="onStateChange(2)">
+                                    <mat-option *ngFor="let option of StateList" [value]="option.StateId">
+                                        {{option.StateName}}
+                                    </mat-option>
+                                </mat-select>
+                                <mat-error
+                                    *ngIf="(PermanentState.dirty  || PermanentState.touched) || (PermanentState.invalid && isSubmitted)">
+                                    State is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="col-sm-4">
+                                <mat-label>City</mat-label>
+                                <mat-select #PermanentCity="ngModel" name="PermanentCity"
+                                    [(ngModel)]="Student.PermanentCityId" required>
+                                    <mat-option *ngFor="let option of pCityList" [value]="option.CityId">
+                                        {{option.CityName}}
+                                    </mat-option>
+                                </mat-select>
+                                <mat-error
+                                    *ngIf="(PermanentCity.dirty  || PermanentCity.touched) || (PermanentCity.invalid && isSubmitted)">
+                                    City is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+
+                            <mat-form-field appearance="outline" class="col-sm-4">
+                                <mat-label>PinCode</mat-label>
+                                <input type="number" matInput #PermanentPinCode="ngModel" name="PermanentPinCode"
+                                    [(ngModel)]="Student.PermanentPinCode" required autofocus>
+                                <mat-error
+                                    *ngIf="(PermanentPinCode.dirty  || PermanentPinCode.touched) || (PermanentPinCode.invalid && isSubmitted)">
+                                    PinCode is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+                        </div>
+
+                        <div class="row">
+                            <p>Additional Information</p>
+
+                            <mat-form-field appearance="outline" class="col-sm-4">
+                                <mat-label>Category</mat-label>
+                                <mat-select #Category="ngModel" name="Category" [(ngModel)]="Student.Category" required>
+                                    <mat-option [value]="Category.Key"
+                                        *ngFor="let Category of CategoryList">{{Category.Value}}</mat-option>
+                                </mat-select>
+                                <mat-error
+                                    *ngIf="(Category.dirty  || Category.touched) || (Category.invalid && isSubmitted)">
+                                    Category is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="col-sm-4">
+                                <mat-label>Religion</mat-label>
+                                <mat-select #Religion="ngModel" name="Religion" [(ngModel)]="Student.Religion" required>
+                                    <mat-option [value]="Religion.Key"
+                                        *ngFor="let Religion of ReligionList">{{Religion.Value}}</mat-option>
+                                </mat-select>
+                                <mat-error
+                                    *ngIf="(Religion.dirty  || Religion.touched) || (Religion.invalid && isSubmitted)">
+                                    Religion is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+
+
+                        </div>
+
+                        <div class="row">
+                            <p>Student Status</p>
+                            <mat-form-field appearance="outline" class="col-sm-4">
+                                <mat-label>Status</mat-label>
+                                <mat-select #Status="ngModel" name="Status" [(ngModel)]="Student.Status" required>
+                                    <mat-option [value]="status.Key"
+                                        *ngFor="let status of StatusList">{{status.Value}}</mat-option>
+                                </mat-select>
+                                <mat-error *ngIf="(Status.dirty  || Status.touched) || (Status.invalid && isSubmitted)">
+                                    Status is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+                    </div>
+
+                </form>
+                <div class="modal-footer mt-2">
+                    <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal"
+                        (click)="resetForm()">Cancel</button>
+                    <button class="btn btn-primary" (click)="saveStudent(StudentForm)">{{Student.StudentId >
+                        0 ? 'Update':'Add'}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="dpModal" tabindex="-1" aria-labelledby="dpModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="dpModalLabel">Update Display Picture</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="displayPic" class="form-label">Display Pic ( png, jpg, jpeg )</label>
+                    <input class="form-control" id="displayPic" type="file" accept="image/*" (change)="editDp($event)">
+                </div>
+                <span>Note : Square image works best ( aspect ratio - 1:1 )</span>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" (click)="saveStudentDp()">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>

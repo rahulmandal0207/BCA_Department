@@ -1,0 +1,50 @@
+.container {
+    display: flex;
+    gap: 1em;
+    flex-wrap: wrap;
+    margin-bottom: 2em;
+}
+
+.card {
+    padding: 1em;
+    transition: transform .25s ease;
+    text-align: center;
+
+}
+
+.quick-links .card {
+    display: flex;
+    font-size: 1.1em;
+    /*flex-direction: row;*/
+    min-width: 11em;
+    justify-content: space-between;
+}
+
+.orverview .card {
+    min-height: 11em;
+}
+
+.card i {
+    font-size: 2em;
+
+}
+
+.card p {
+    font-weight: 500;
+    font-size: 1.2em;
+}
+
+.card h3 {
+    font-size: 5em;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+.group {
+    display: flex;
+    flex-direction: column;
+    gap: 1em
+}
+

@@ -1,0 +1,162 @@
+<app-progress *ngIf="dataLoading"></app-progress>
+
+<main id="ad-main" *ngIf="action.ResponseReceived">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between">
+            <span class="p-1">Top Student List</span>
+            <button *ngIf="action.CanCreate" class="btn btn-primary" data-bs-toggle="modal"
+                data-bs-target="#staticBackdrop" (click)="resetForm()">New
+                Top Student</button>
+        </div>
+
+
+        <div class="card-body ">
+
+
+            <div class="row">
+                <mat-form-field appearance="outline" class="col-sm-4">
+                    <mat-label>--Select Session--</mat-label>
+                    <mat-select name="SessionId" [(ngModel)]="SelectedSession.SessionId"
+                        (selectionChange)="getTopStudentList()" (selectionChange)="getStudentList();">
+                        <mat-option *ngFor="let session of SessionList" [value]="session.SessionId">
+                            {{session.SessionName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+            <div *ngIf="TopStudentList.length > 0" class="table-container overflow-auto">
+
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th style="cursor:pointer;" (click)="sort('StudentName')">Student Name <i
+                                    class="bi bi-arrow-down-up"></i></th>
+                            <th style="cursor:pointer;" (click)="sort('Cgpa')">CGPA <i
+                                    class="bi bi-arrow-down-up"></i></th>
+                            <th style="cursor:pointer;" (click)="sort('Status')">Status <i
+                                    class="bi bi-arrow-down-up"></i></th>
+                            <th *ngIf="action.CanEdit">Edit</th>
+                            <th *ngIf="action.CanDelete">Delete</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr
+                            *ngFor="let item of TopStudentList |filter:Search|orderBy:sortKey:reverse|paginate: { itemsPerPage: itemPerPage, currentPage: p } ; ; let i = index;">
+                            <td>{{i+1}}</td>
+                            <td>{{item.StudentName}}</td>
+                            <td>{{item.Cgpa}}</td>
+                            <td>
+                                <span class="p-1"
+                                    [ngClass]="item.Status == 1 ? 'badge text-bg-success':'badge text-bg-danger'">
+                                    {{item.StatusName}}
+                                </span>
+                            </td>
+                            <td *ngIf="action.CanEdit">
+                                <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
+                                    data-bs-target="#staticBackdrop" (click)="editTopStudent(item)">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+                            </td>
+                            <td *ngIf="action.CanDelete">
+                                <button class="btn btn-sm btn-danger" (click)="deleteTopStudent(item)">
+                                    <i class="bi bi-trash-fill"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="dataTable-bottom">
+                    <pagination-controls (pageChange)="onTableDataChange($event)" style="float:right;"
+                        class="my-pagination"></pagination-controls>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</main>
+
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">{{TopStudent.TopStudentId > 0 ?
+                    'Update':'New'}}
+                    TopStudent
+                </h1>
+                <button type=" button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                    (click)="resetForm()"></button>
+            </div>
+            <div class="modal-body">
+
+                <form #TopStudentForm="ngForm">
+                    <div class="container">
+                        <div class="row">
+
+                            <mat-form-field appearance="outline" class="col-sm-6">
+                                <mat-label>--Select Session--</mat-label>
+                                <mat-select #SessionId="ngModel" name="SessionId" [(ngModel)]="SelectedSession.SessionId"
+                                    (selectionChange)="getStudentList();">
+                                    <mat-option *ngFor="let session of SessionList" [value]="session.SessionId">
+                                        {{session.SessionName}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="col-sm-6">
+                                <mat-label>Select Student</mat-label>
+                                <input matInput #StudentName="ngModel" name="StudentName"
+                                    (ngModelChange)="filterStudentList(TopStudent.StudentName)"
+                                    [(ngModel)]="TopStudent.StudentName" [matAutocomplete]="autoStudentName" required>
+                                <mat-autocomplete #autoStudentName="matAutocomplete">
+                                    <mat-option *ngFor="let option of StudentList" [value]="option.StudentName"
+                                        (onSelectionChange)="TopStudent.StudentId = option.StudentId">
+                                        {{option.StudentName}}
+                                    </mat-option>
+                                </mat-autocomplete>
+                                <mat-error
+                                    *ngIf="(StudentName.dirty  || StudentName.touched) || (StudentName.invalid && isSubmitted)">
+                                    Pupil is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="col-sm-6">
+                                <mat-label>CGPA</mat-label>
+                                <input type="text" matInput #Cgpa="ngModel" name="ngModel" [(ngModel)]="TopStudent.Cgpa"
+                                    required>
+
+                                <mat-error *ngIf="(Cgpa.dirty  || Cgpa.touched) || (Cgpa.invalid && isSubmitted)">
+                                    Pupil is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="col-sm-6">
+                                <mat-label>Status</mat-label>
+                                <mat-select #Status="ngModel" name="Status" [(ngModel)]="TopStudent.Status" required>
+                                    <mat-option [value]="status.Key"
+                                        *ngFor="let status of StatusList">{{status.Value}}</mat-option>
+                                </mat-select>
+                                <mat-error *ngIf="(Status.dirty  || Status.touched) || (Status.invalid && isSubmitted)">
+                                    Status is <strong>required</strong>
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+                    </div>
+
+                </form>
+                <div class="modal-footer mt-2">
+                    <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal"
+                        (click)="resetForm()">Cancel</button>
+                    <button class="btn btn-primary" (click)="saveTopStudent(TopStudentForm)">{{TopStudent.TopStudentId >
+                        0 ? 'Update':'Add'}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

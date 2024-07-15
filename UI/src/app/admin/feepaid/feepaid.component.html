@@ -1,0 +1,149 @@
+<app-progress *ngIf="dataLoading"></app-progress>
+
+<main id="ad-main" *ngIf="action.ResponseReceived">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between">
+            <span class="p-1">FeePaid List</span>
+
+        </div>
+
+        <div class="card-body ">
+
+            <div class="row">
+                <mat-form-field appearance="outline" class="col-sm-4">
+                    <mat-label>--Select Session--</mat-label>
+                    <mat-select name="SessionId" [(ngModel)]="SelectedSession.SessionId"
+                        (selectionChange)="getFeePaidList()">
+                        <mat-option *ngFor="let session of SessionList" [value]="session.SessionId">
+                            {{session.SessionName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+            <div *ngIf="FeePaidList.length > 0" class="table-container overflow-auto">
+
+                <div class="dataTable-top d-flex justify-content-between m-2" s>
+                    <div class="dataTable-dropdown d-flex">
+                        <select class="dataTable-selector form-select form-select-sm" [(ngModel)]="itemPerPage">
+                            <option *ngFor="let option of PageSize" [value]="option">{{option}} </option>
+                        </select>
+                        <span class="ms-2" style="white-space: nowrap;">Entries per page</span>
+                    </div>
+                    <div class="dataTable-search">
+                        <input class="dataTable-input form-control form-control-sm" [(ngModel)]="Search"
+                            placeholder="Search..." type="text">
+                    </div>
+                </div>
+
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th style="cursor:pointer;" (click)="sort('UniversityRoll')">University Roll <i
+                                    class="bi bi-arrow-down-up"></i></th>
+                            <th style="cursor:pointer;" (click)="sort('ClassRoll')">Class Roll <i
+                                    class="bi bi-arrow-down-up"></i></th>
+                            <th style="cursor:pointer;" (click)="sort('StudentName')">Student Name <i
+                                    class="bi bi-arrow-down-up"></i></th>
+                            <th style="cursor:pointer;">Sem 1</th>
+                            <th style="cursor:pointer;">Sem 2</th>
+                            <th style="cursor:pointer;">Sem 3</th>
+                            <th style="cursor:pointer;">Sem 4</th>
+                            <th style="cursor:pointer;">Sem 5</th>
+                            <th style="cursor:pointer;">Sem 6</th>
+                            <th style="cursor:pointer;" (click)="sort('Status')">Status <i
+                                    class="bi bi-arrow-down-up"></i></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr [ngClass]="item.Status == 2 ? 'table-danger':'table-success'"
+                            *ngFor="let item of FeePaidList |filter:Search|orderBy:sortKey:reverse|paginate: { itemsPerPage: itemPerPage, currentPage: p } ; ; let i = index;">
+                            <td>{{i+1}}</td>
+                            <td>{{item.UniversityRoll}}</td>
+                            <td>{{item.ClassRoll}}</td>
+                            <td>{{item.StudentName}}</td>
+                            <td>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" #Sem1="ngModel"
+                                        [(ngModel)]="item.Sem1" [checked]="item.Sem1 == true ? true : false"
+                                        [disabled]="item.Status == 2">
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" #Sem2="ngModel"
+                                        [(ngModel)]="item.Sem2" [checked]="item.Sem2 == true ? true : false"
+                                        [disabled]="item.Status == 2">
+
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" #Sem3="ngModel"
+                                        [(ngModel)]="item.Sem3" [checked]="item.Sem3 == true ? true : false"
+                                        [disabled]="item.Status == 2">
+
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" #Sem4="ngModel"
+                                        [(ngModel)]="item.Sem4" [checked]="item.Sem4 == true ? true : false"
+                                        [disabled]="item.Status == 2">
+
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" #Sem5="ngModel"
+                                        [(ngModel)]="item.Sem5" [checked]="item.Sem5 == true ? true : false"
+                                        [disabled]="item.Status == 2">
+
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" #Sem6="ngModel"
+                                        [(ngModel)]="item.Sem6" [checked]="item.Sem6 == 1 ? true : false"
+                                        [disabled]="item.Status == 2">
+
+                                </div>
+                            </td>
+                            <td>
+                                <span class="p-1"
+                                    [ngClass]="item.Status == 1 ? 'badge text-bg-success':'badge text-bg-danger'">
+                                    {{item.StatusName}}
+                                </span>
+                                <!--<select [ngClass]="item.Status == 1 ? 'text-success':'text-danger'"
+                                    class="form-select" #Status="ngModel" [(ngModel)]="item.Status">
+                                    <option [value]="status.Key" *ngFor="let status of StatusList">{{status.Value}}
+                                    </option>
+                                </select>-->
+
+                                <!--<mat-select #Status="ngModel" [(ngModel)]="item.Status">
+                                    <mat-option [value]="status.Key" *ngFor="let status of StatusList">
+                                        {{status.Value}}
+                                    </mat-option>
+                                </mat-select>-->
+
+                                <!--{{item.Status}}-->
+                            </td>
+
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="dataTable-bottom">
+                    <pagination-controls (pageChange)="onTableDataChange($event)" style="float:right;"
+                        class="my-pagination"></pagination-controls>
+                </div>
+
+            </div>
+        </div>
+        <div *ngIf="FeePaidList.length > 0" class="card-footer" style="text-align: center;">
+            <button class="btn btn-primary" (click)="saveFeePaid()">Submit</button>
+        </div>
+    </div>
+
+</main>
